@@ -3,7 +3,7 @@ var fs = require("fs");
 var path = require("path");
 var renderme = require("renderme");
 var FindURLs = require(path.join(__dirname,"../controllers","findURLs.server.js"));
-var os = require("os");
+require("dotenv").load();
 
 module.exports = function (app,db) {
 
@@ -43,7 +43,7 @@ module.exports = function (app,db) {
           findURLs.insertURL(newURL,function(result) {
             var reply = {
               "original_url": result.original_url,
-              "short_url": os.hostname() + "/" + result.route
+              "short_url": process.env.APP_URL || "" + "/" + result.route
             }
             res.end(JSON.stringify(reply));
           });
