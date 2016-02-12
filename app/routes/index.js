@@ -43,7 +43,7 @@ module.exports = function (app,db) {
           findURLs.insertURL(newURL,function(result) {
             var reply = {
               "original_url": result.original_url,
-              "short_url": process.env.APP_URL || "" + "/" + result.route
+              "short_url": process.env.APP_URL + "/" + result.route
             }
             res.end(JSON.stringify(reply));
           });
