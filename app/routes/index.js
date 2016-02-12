@@ -49,12 +49,28 @@ module.exports = function (app,db) {
           });
         }
         else {
-          reply = {
+          var reply = {
             "error": "Invalid URL"
           };
           res.end(JSON.stringify(reply));
         }
       });
+    });
+
+  app.route("/new/:badurl").
+    get(function(req,res) {
+    var reply = {
+      "error": "Invalid URL"
+    };
+    res.end(JSON.stringify(reply));
+  });
+
+  app.route("/new/:badprotocol/:badurl").
+    get(function(req,res) {
+      var reply = {
+        "error": "Invalid URL"
+      };
+      res.end(JSON.stringify(reply));
     });
 
   app.route("/:shortened").
