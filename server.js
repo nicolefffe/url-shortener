@@ -3,10 +3,11 @@
 var express = require('express');
 var routes = require('./app/routes/index.js');
 var mongo = require("mongodb").MongoClient;
+require("dotenv").load();
 
 var app = express();
 
-mongo.connect("mongodb://localhost:27017/urlshortener", function(err,db) {
+mongo.connect(process.env.MONGOLAB_URI || "mongodb://localhost:27017/", function(err,db) {
   if (err) { throw err; }
 
   else { console.log("Connected to mongodb"); }
