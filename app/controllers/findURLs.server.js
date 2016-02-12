@@ -6,6 +6,8 @@ function handleURLs(db) {
   var urls = db.collection("urls");
 
   this.insertURL = function(newURL,callback) {
+    // Check to see if newURL already exists in collection, and return doc if it does
+
     urls.findOne(
       {original_url: newURL},
       {original_url: 1,route: 1,_id: 0},
@@ -16,6 +18,8 @@ function handleURLs(db) {
         }
         else {
 
+          // If newURL is not yet in db, insert it with newly-generated route after finding a route that is not
+          // already in use
           var urls = db.collection("urls");
           var length = 4;
           var newRoute;
@@ -44,6 +48,8 @@ function handleURLs(db) {
             function(err) {
               if (err) { throw err; }
               else {
+
+                // After insert, check to make sure doc now exists in db
                 urls.findOne(
                   {original_url: newURL},
                   {original_url: 1,route: 1,_id: 0},
@@ -58,6 +64,8 @@ function handleURLs(db) {
         }
     });
   };
+
+  // Called when user attempts to use a route for a shortened url
 
   this.getURL = function(shortened,callback) {
     urls.findOne(

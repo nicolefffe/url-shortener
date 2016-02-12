@@ -25,53 +25,37 @@ module.exports = function (app,db) {
       );
     });
 
-  // Users can create a new route by adding the full url to /new/
-  app.route("/new/:protocol//:path").
-    get(function(req,res) {
+  app.use("/new",function(req,res) {
+    console.log(req.originalUrl);
 
-      // Put together full url
-      var newURL = req.params.protocol + "//" + req.params.path;
+    var newURL = req.originalUrl;
+    newURL = newURL.slice(5);
 
-      // First decide if the passed url is valid by requesting it
+    // First decide if the passed url is valid by requesting it
 
-      request(newURL,function(err,response,body) {
-        if (!err && response.statusCode == 200) {
+    request(newURL,function(err,response,body) {
+      if (!err && response.statusCode == 200) {
 
-          // The response was valid, so connect to the database to return a JSON-formatted string
-          // describing the original url and its shortened route
+        // The response was valid, so connect to the database to return a JSON-formatted string
+        // describing the original url and its shortened route
 
-          findURLs.insertURL(newURL,function(result) {
-            var reply = {
-              "original_url": result.original_url,
-              "short_url": process.env.APP_URL + "/" + result.route
-            }
-            res.end(JSON.stringify(reply));
-          });
-        }
-        else {
+        findURLs.insertURL(newURL,function(result) {
+          var host = process.env.APP_URL || "hostname";
           var reply = {
-            "error": "Invalid URL"
-          };
+            "original_url": result.original_url,
+            "short_url": host + "/" + result.route
+          }
           res.end(JSON.stringify(reply));
-        }
-      });
+        });
+      }
+      else {
+        var reply = {
+          "error": "Invalid URL"
+        };
+        res.end(JSON.stringify(reply));
+      }
     });
-
-  app.route("/new/:badurl").
-    get(function(req,res) {
-    var reply = {
-      "error": "Invalid URL"
-    };
-    res.end(JSON.stringify(reply));
   });
-
-  app.route("/new/:badprotocol/:badurl").
-    get(function(req,res) {
-      var reply = {
-        "error": "Invalid URL"
-      };
-      res.end(JSON.stringify(reply));
-    });
 
   app.route("/:shortened").
     get(function(req,res) {
